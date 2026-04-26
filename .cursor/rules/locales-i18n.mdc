@@ -1,0 +1,23 @@
+---
+description: i18next flat keys, dual-locale edits, Zod/backend message keys
+globs: src/locales/**/*
+alwaysApply: false
+---
+
+# Files
+
+- `en.json` / `ar.json`: **flat** objects, **kebab-case** keys, alphabetically sorted.
+- Every new key must be added to **both** locales in the same change.
+- Do not nest translation objects.
+
+# Key usage
+
+- Reuse keys when text is identical across screens.
+- Breadcrumb labels: route segment string as key where that is existing convention.
+- Zod `.message` values and backend `message` strings exposed to UI: **translation keys**, not free-form English.
+- Common suffixes: `-q` (questions), `-dots` (ellipsis placeholders), `-description` (helper copy), `-suffix` (inline headings).
+
+# Out of scope for i18n
+
+- Do not translate image `alt` text merely to increase coverage.
+- Avoid i18n for debug-only `aria-label`s / `console` strings (see core workflow).

@@ -1,0 +1,54 @@
+---
+description: React components—forms, tables, layout, Tailwind, shadcn, empty/loading states
+globs: src/components/**/*.tsx
+alwaysApply: false
+---
+
+# UI primitives
+
+- Import shadcn from `@/components/ui/...` only. Never hand-edit `src/components/ui/**`.
+- Use `cn()` from `@/lib/utils` for conditional classes.
+- Icons: `lucide-react` only, per-icon imports, size with `size-4` / `size-5` / `size-8` etc.
+
+# Layout patterns
+
+- Page: `flex flex-1 flex-col gap-4 p-4`
+- Page header: `flex flex-wrap items-center justify-between gap-4`
+- Page title: `text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl`
+- Table shell: `overflow-hidden rounded-md border`
+- Stat grids: `grid grid-cols-1 divide-y rounded-md border md:grid-cols-N md:divide-x md:divide-y-0`
+
+# RTL / i18n-aware layout
+
+- Locales: `en-US` (LTR), `ar-SA` (RTL). Prefer logical Tailwind (`ms-*`, `me-*`, `ps-*`, `pe-*`, `border-s`, `border-e`); use `rtl:` / `ltr:` when required.
+- Sidebar placement follows existing `_app` behavior.
+
+# Forms (RHF + Zod)
+
+- `useForm` with `zodResolver` and `<Feature>Schema` / `SchemaInitData` from services.
+- `shouldUnregister: true` when fields mount/unmount.
+- Fields: `<Controller>` + shadcn `Field` / `FieldLabel` / `FieldDescription` / `FieldError`; `data-invalid` on `Field`; `aria-invalid` on control; `disabled={loading}` during mutations; ids `feature-field` kebab-case.
+- Do not use `register` directly for shadcn-style controls.
+- Select / Switch / Calendar / Popover / Command: explicit `value` + `onValueChange`.
+- Submit: create → `disabled={loading || !form.formState.isValid}`; update → also require `form.formState.isDirty`.
+- Dialog create: reset on `DialogContent` `onCloseAutoFocus`. Dialog edit: `useEffect` + `form.reset(data, { keepDefaultValues: false })` when entity loads; do **not** reset on `onOpenChange` only.
+
+# Tables (TanStack Table)
+
+- Decompose only as far as similar features do (`Table`, `TableMain`, `TableColumnDefs`, search/filter/pagination/export/delete/reset when needed).
+- Owner file holds query hook, `columnFilters`, `columnVisibility`, `rowSelection`, `useReactTable`, toolbar, wrapper, pagination.
+- Settings aligned with existing tables: `pageSize: 20`, `autoResetPageIndex: false`, `getRowId: (row) => row._id as string`, `getCoreRowModel`, `getPaginationRowModel`, `getFilteredRowModel`.
+- Loading: `TableSkeleton`. Empty body: `t("no-results")`.
+- Columns fn returns `ColumnDef[]`; first column select checkbox when the feature uses row selection; last column actions; short cell renderers; small in-file header components for translations.
+- Export: feature helpers + PapaParse + UTF-8 BOM; filenames `${feature}_${Date.now()}.csv` or `.json` per existing exporters.
+
+# Empty / error / loading
+
+- Order early returns: missing scope → empty component → loading skeletons → `GenericError` → content.
+- Empty/error components live in `components/empty-states` using shadcn `Empty` building blocks.
+- Section query errors: `GenericError`; do not show raw API strings on pages.
+- Router-level errors: shared `ErrorComponent` pattern from `empty-states`.
+
+# Theme
+
+- Use `ThemeProvider` / patterns from `contexts/theme-provider` (`vite-ui-theme` storage) unless changing theme architecture.

@@ -1,0 +1,54 @@
+---
+description: Fixed stack, src/ layout, imports/exports, and naming for this frontend template
+alwaysApply: true
+---
+
+# Stack (do not swap without explicit approval)
+
+- **Build:** Vite 7 · **UI:** React 19 · **Lang:** TypeScript strict · **Package manager:** npm
+- **Routing:** TanStack Router (file-based) · **Server state:** TanStack Query · **Tables:** TanStack Table
+- **Forms:** React Hook Form + Zod (`zodResolver`) · **HTTP:** Axios only via `src/services/API.ts`
+- **UI kit:** shadcn/ui in `src/components/ui` · **Icons:** lucide-react · **Auth:** Clerk
+- **i18n:** i18next + react-i18next (`en-US`, `ar-SA`) · **Toasts:** sonner · **Dates:** date-fns / date-fns-tz · **CSV:** PapaParse
+- **Styling:** Tailwind CSS 4 (`@tailwindcss/vite`), utilities in markup; global CSS **only** in `src/index.css`
+
+**Do not add:** Redux, Zustand, CSS modules, styled-components/emotion, a second router, a second HTTP client, another icon set, or another UI kit.
+
+# `src/` layout
+
+- `components/` — per-feature folders; `_app/` (shell), `general/`, `empty-states/`, `skeleton/`, `ui/` (shadcn only)
+- `contexts/` — cross-feature providers (`<Thing>Provider` + `useThing`)
+- `hooks/<feature>/` — mirrors `services/<feature>/` and `components/<feature>/`
+- `lib/` — pure helpers; project-wide enum-like values in `lib/enums.ts`
+- `locales/` — `en.json`, `ar.json` (flat keys), `i18n.ts`
+- `routes/` — file-system routes
+- `services/` — `API.ts` + `<feature>/` (`.api.ts`, `.schemas.ts`, `.helpers.ts`)
+
+Do not create empty placeholder files; omit what a feature does not need.
+
+# Imports
+
+- Use `@/` → `src/` (see `tsconfig`). Do not import above `src/`.
+- Order: (1) external packages, (2) blank line, (3) `@/` imports.
+
+# Naming and exports
+
+| Area            | Convention                                                                                                                         |
+| --------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| Components      | `PascalCase.tsx`, `function Name()`, `type NameProps`, **default export** at bottom, one primary component per file                |
+| Hooks           | `use<Action><Resource>.ts`, **named** exports, one hook per file                                                                   |
+| Services folder | lowercase feature (`events/`, `staff/`)                                                                                            |
+| Service files   | `<Feature>.api.ts`, `<Feature>.schemas.ts`, `<Feature>.helpers.ts` (PascalCase feature prefix)                                     |
+| API exports     | camelCase functions; entity response types as singular PascalCase `type`                                                           |
+| Routes          | kebab-case segments; `$param.tsx`; pathless `_app.tsx`, `_auth.tsx`, `_base.tsx`; `export const Route = createFileRoute(...)(...)` |
+| Contexts        | `thing-provider.tsx`, `<Thing>Provider`, `useThing`                                                                                |
+
+File-local `ENDPOINT` in `.api.ts` is private to that file (not exported).
+
+# Prettier (do not fight the repo)
+
+`printWidth` 360, `tabWidth` 4, semicolons, double quotes, `trailingComma: "none"`, `arrowParens: "always"`. Do not hand-sort Tailwind classes (`prettier-plugin-tailwindcss`).
+
+# Comments
+
+Default to none. Only comment non-obvious _why_ (external contracts, hidden invariants, workarounds). Match comment density of neighboring code.

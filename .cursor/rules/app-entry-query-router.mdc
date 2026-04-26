@@ -1,0 +1,18 @@
+---
+description: QueryClient defaults, router creation, ClerkProvider, i18n re-render
+globs: src/main.tsx
+alwaysApply: false
+---
+
+# `main.tsx` responsibilities
+
+- Import global CSS and i18n bootstrap before React.
+- `QueryClient` defaults: `staleTime: 3 * 60 * 1000`, `refetchInterval: 5 * 60 * 1000` (match existing).
+- `createRouter` with `routeTree`, `defaultPreload: "render"`, `scrollRestoration: true`, `notFoundMode: "root"`, shared `defaultErrorComponent`, `context: { queryClient }`.
+- Wrap `RouterProvider` with `QueryClientProvider` and `ClerkProvider` (`appearance`, `localization` from i18n locale).
+- Token bridge: `setClerkGetToken` is invoked from `__root.tsx` (inside the router tree)—do not duplicate that wiring in `main.tsx`.
+- Call `mainRender()` on mount and again on `i18n.on("languageChanged", mainRender)` so Clerk localization tracks language.
+
+# Env
+
+- Read Clerk publishable key and API hosts via `import.meta.env` using the same variable names already referenced in this file—do not rename env vars casually.

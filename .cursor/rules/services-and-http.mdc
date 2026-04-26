@@ -1,0 +1,34 @@
+---
+description: Axios wrapper, feature API modules, uploads, and service-layer rules
+globs: src/services/**/*.ts
+alwaysApply: false
+---
+
+# HTTP entry
+
+- Only `src/services/API.ts` imports axios. It exposes `GET`, `POST`, `PATCH`, `PUT`, `DELETE`, and `setClerkGetToken`.
+- Normalize errors to `Error` in `API.ts`. Hooks and components consume normalized errors—never `catch` Axios in UI.
+
+# Clerk + tokens
+
+- `setClerkGetToken` registers Clerk’s token getter once; a single interceptor adds `Authorization: Bearer …`.
+- Do not call `getToken()` inside individual `.api.ts` functions.
+- Strip auth for known third-party URLs (e.g. presigned S3 uploads).
+
+# Feature `.api.ts`
+
+- Top of file: file-local `ENDPOINT` using `import.meta.env` (`VITE_ENV`, `VITE_BE_ENDPOINT`, dev port pattern as already used in the repo).
+- Export async functions (camelCase) and entity-related `type`s.
+- Return parsed response data from functions.
+- **Creates:** accept `idempotencyKey`, send header `Idempotency-Key`.
+- **Bulk actions:** body shape `{ targets: ids }` unless the backend contract differs—match existing callers.
+- **Uploads:** `POST` for presigned URL, `PUT` with `File` to storage, return/store public URL. Keep helpers private at bottom of same file.
+
+# `.schemas.ts` / `.helpers.ts`
+
+- Zod: export `<Feature>Schema`, `<Feature>SchemaType`, `<Feature>SchemaInitData`. Zod message strings are **i18n keys**, not English prose.
+- Helpers: pure feature utilities; naming follows existing feature files.
+
+# Splitting large features
+
+- If schemas grow unwieldy (~150+ lines), split (`*.main.schemas.ts`, aspect files) and re-export from `<Feature>.schemas.ts` following an existing feature’s pattern.

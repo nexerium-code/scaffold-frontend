@@ -1,0 +1,14 @@
+---
+description: Tailwind 4 entry, theme tokens, global overrides—single stylesheet rule
+globs: src/index.css
+alwaysApply: false
+---
+
+# `src/index.css`
+
+- This file is the **only** global stylesheet: `@import "tailwindcss"`, `@theme`, fonts, CSS variables, base layer tweaks, and unavoidable global overrides.
+- Do not add other `.css` / SCSS layers or CSS-in-JS for app styling.
+
+# Tokens and plugins
+
+- Follow existing `@theme` / variable patterns when adding colors, radii, or fonts so Tailwind utilities stay consistent.

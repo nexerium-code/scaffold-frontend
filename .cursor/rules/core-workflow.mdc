@@ -1,0 +1,40 @@
+---
+description: How to work in this repo—consistency, scope, verification, generated files
+alwaysApply: true
+---
+
+# Core workflow
+
+## Priority
+
+1. **Consistency** — Before editing, open 2–3 neighboring files in the same feature and layer; match structure, naming, exports, imports, hook/service split, Tailwind usage, error handling, and comment density.
+2. **Written standards** override local precedent when they conflict; if silent, follow local precedent.
+3. **Tight scope** — Do not refactor unrelated code, rename files, change APIs, add dependencies, or introduce new architecture unless the user explicitly asked.
+
+## Agent behavior (Cursor)
+
+- Search the codebase (`rg`/grep) to find patterns before inventing new ones.
+- Read existing implementations in the same feature before writing.
+- Prefer small, reviewable diffs; do not reformat unrelated files.
+- After meaningful changes, run `npm run lint` and `npm run build`. If they cannot run, say so in the reply.
+
+## Never edit manually
+
+- `src/components/ui/**` — shadcn/ui; add or update via `npx shadcn@latest add <name>` only.
+- `src/routeTree.gen.ts` — TanStack Router plugin output.
+
+## Dependencies and contracts
+
+- **npm** only; keep `package-lock.json`.
+- Do not add packages without explicit approval.
+- Do not change API contracts, Zod shapes, hook return shapes, or folder layout without a clear, user-approved reason.
+
+## TypeScript
+
+- Strict TS only (`.ts` / `.tsx`). Prefer `type` over `interface` unless extending a third-party type.
+- Prefix intentionally unused bindings with `_` (ESLint).
+
+## Debugging and noise
+
+- No `console.log` in committed app code.
+- No compatibility shims, gratuitous TODOs, or feature flags unless the task requires them.

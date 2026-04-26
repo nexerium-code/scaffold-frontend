@@ -1,0 +1,36 @@
+---
+description: TanStack Router file routes, layouts, navigation, Clerk wiring
+globs: src/routes/**/*.tsx
+alwaysApply: false
+---
+
+# Router setup (when touching `main.tsx`)
+
+- `createRouter`: `defaultPreload: "render"`, `scrollRestoration: true`, `notFoundMode: "root"`, `defaultErrorComponent` from `@/components/empty-states`, `context: { queryClient }`.
+- Re-render on `i18n.on("languageChanged", …)` so Clerk `localization` stays aligned with locale.
+
+# Root route (`__root.tsx`)
+
+- Use `createRootRouteWithContext` with router context typing.
+- Mount global providers, `setClerkGetToken`, one `<Toaster richColors />`, shared `NotFound` as `notFoundComponent`.
+
+# Layout conventions
+
+- `_app` + `_app/` — authenticated shell: sidebar, header, scope providers, Clerk `<Protect>`, redirect unauthenticated users to sign-in as already implemented.
+- `_auth` + `_auth/` — sign-in/up; redirect signed-in users away per existing pattern.
+- `_base` + `_base/` — public/marketing layout when present.
+
+# Navigation and params
+
+- Internal links: TanStack `<Link>`. Render redirects: `<Navigate … />`. Params: `Route.useParams()`.
+- Do not use raw `<a href>` for in-app navigation.
+
+# Auth model
+
+- Clerk only—no custom JWT storage, refresh logic, or hand-rolled sign-in forms.
+- Roles/permissions: Clerk **publicMetadata**; types in `lib/enums.ts`; UI gates like `role === RoleTypes.ADMIN || permissions?.[scope]?.feature`. Treat as UX only—backend is authoritative.
+
+# Route modules
+
+- Export: `export const Route = createFileRoute("…")({ … })` matching existing routes.
+- Static segments kebab-case; dynamic `$param.tsx`; folder index `index.tsx`.

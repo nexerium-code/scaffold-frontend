@@ -1,0 +1,27 @@
+---
+description: Cross-feature context providers and where client state may live
+globs: src/contexts/**/*.tsx
+alwaysApply: false
+---
+
+# Context providers
+
+- One provider file: `thing-provider.tsx` exporting `<Thing>Provider` and `useThing` (or `useSelectedThing`) as **named** exports.
+- Hook throws if used outside provider (`context === undefined`).
+- Use for **cross-cutting** client state only: theme, selected scope/org/event, direction, etc.—not feature-local table filters.
+
+# Persistence
+
+- `localStorage` only inside providers when the repo already does so (e.g. theme, selected scope). No auth tokens or sensitive payloads in storage.
+
+# Selection toggles
+
+- Selecting the same id again clears selection when that is the existing `useSelectedScope` / switcher pattern.
+
+# State layers (reference)
+
+- **Server:** TanStack Query only.
+- **Shared client:** contexts (this folder) + minimal `useState` inside providers.
+- **UI-local:** `useState` / `useReducer` in components (dialogs, tabs, filters, table UI state).
+
+Do not store derived state; compute in render or `useMemo`.

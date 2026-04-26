@@ -1,0 +1,41 @@
+---
+description: TanStack Query hooks—reads, mutations, keys, toasts
+globs: src/hooks/**/*.ts
+alwaysApply: false
+---
+
+# Principles
+
+- All server data goes through TanStack Query. Do not mirror query `data` into parallel `useState`. Do not fetch lists/details with `useEffect`.
+- Respect global defaults from `main.tsx` / `QueryClient` (`staleTime`, `refetchInterval`).
+
+# Read hooks (`useQuery`)
+
+- One `useQuery` per file; live under `src/hooks/<feature>/`.
+- Import API functions with an `API` suffix alias when that is local convention (e.g. `getX as getXAPI`).
+- Rename `data` → resource name; `isPending` → `loading`.
+- Return shape like `{ resource, loading, isError }` matching sibling hooks.
+- `retry: false` unless an existing hook family does otherwise.
+- Lists: `placeholderData: keepPreviousData` when siblings do.
+- Newest-first: `select: (data) => data?.reverse()` only when that matches the feature’s UX.
+
+# Query keys
+
+- Arrays only; first element stable kebab-case resource string; append ids after the resource name.
+- Examples: `["feedbacks"]`, `["feedbacks", eventId]`, `["items-stats", scopeId]`.
+- Invalidate all affected keys after mutations (list, detail, stats, parent aggregates).
+
+# Mutations
+
+- **Creates:** `useIdempotentMutation` when that is the project pattern.
+- **Updates/deletes:** `useMutation` unless a shared wrapper exists—match the feature.
+- Multi-arg mutations: single object parameter.
+- Always implement `onSuccess`, `onError`, `onSettled`; call `reset()` in `onSettled`.
+- Toasts **only** here (sonner), not for read/query errors:
+    - `toast.success(t(response || "<existing-success-key>"), { duration: 5000 })`
+    - `toast.error(t(error.message || "something-went-wrong-please-try-again-later"))`
+- Accept optional `successCallBack?: () => void` when sibling mutations do.
+
+# Components
+
+- Components use hooks; they do not import `.api.ts` directly.

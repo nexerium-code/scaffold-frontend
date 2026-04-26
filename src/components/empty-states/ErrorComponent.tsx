@@ -1,9 +1,9 @@
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
-import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty';
-import { Link } from '@tanstack/react-router';
+import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
 
 function ErrorComponent() {
     const { t } = useTranslation();

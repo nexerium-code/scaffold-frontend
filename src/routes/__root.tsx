@@ -1,5 +1,8 @@
 import { useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "@clerk/clerk-react";
+import { QueryClient } from "@tanstack/react-query";
+import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 
 import NotFound from "@/components/empty-states/NotFound";
 import { DirectionProvider } from "@/components/ui/direction";
@@ -7,10 +10,7 @@ import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { ThemeProvider } from "@/contexts/theme-provider";
 import { setClerkGetToken } from "@/services/API";
-import { useAuth } from "@clerk/clerk-react";
-import { QueryClient } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { createRootRouteWithContext, Outlet } from "@tanstack/react-router";
 
 // import { TanStackRouterDevtools } from "@tanstack/router-devtools";
 

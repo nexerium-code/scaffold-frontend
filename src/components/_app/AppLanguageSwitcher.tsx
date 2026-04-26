@@ -1,5 +1,5 @@
 import { Globe } from "lucide-react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -7,25 +7,25 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 function AppLanguageSwitcher() {
     const { i18n } = useTranslation();
-
     const isArabic = i18n.language.startsWith("ar");
 
-    function toggleLanguage() {
+    const toggleLanguage = useCallback(() => {
         i18n.changeLanguage(isArabic ? "en-US" : "ar-SA");
-    }
+    }, [i18n, isArabic]);
 
     useEffect(() => {
-        function handleKeyDown(e: KeyboardEvent) {
-            if (e.key === "l" || e.key === "L") {
-                const tag = (e.target as HTMLElement)?.tagName;
-                if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) return;
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "l" || event.key === "L") {
+                const target = event.target as HTMLElement;
+                const tag = target?.tagName;
+                if (tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable) return;
                 toggleLanguage();
             }
         }
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    });
+    }, [toggleLanguage]);
 
     return (
         <Tooltip>

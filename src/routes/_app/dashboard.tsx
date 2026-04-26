@@ -1,71 +1,103 @@
-import { ArrowLeftRight, CalendarIcon, Laptop, LinkIcon, MapPin } from "lucide-react";
+import { Archive, Database, FileText } from "lucide-react";
+import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { createFileRoute, Link } from "@tanstack/react-router";
 
-import AttendeesAttendedChart from "@/components/analytics/AttendeesAttendedChart";
-import AttendeesRegisteredChart from "@/components/analytics/AttendeesRegisteredChart";
-import EnrolleesApprovedChart from "@/components/analytics/EnrolleesApprovedChart";
-import ExclusivesAttendedChart from "@/components/analytics/ExclusivesAttendedChart";
-import ParticipantsApprovedChart from "@/components/analytics/ParticipantsApprovedChart";
-import RepliesRecievedChart from "@/components/analytics/RepliesRecievedChart";
 import GenericError from "@/components/empty-states/GenericError";
-import NoEventSelected from "@/components/empty-states/NoEventSelected";
-import UpdateEventDialog from "@/components/events/UpdateEventDialog";
-import CopyInput from "@/components/general/CopyInput";
+import NoScopeSelected from "@/components/empty-states/NoScopeSelected";
 import DashboardSkeleton from "@/components/skeleton/DashboardSkeleton";
 import { Button } from "@/components/ui/button";
-import { ButtonGroup } from "@/components/ui/button-group";
-import { Calendar } from "@/components/ui/calendar";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { useSelectedEvent } from "@/contexts/event-provider";
-import { useUserEvent } from "@/hooks/events/useUserEvent";
-import { LocationTypes } from "@/lib/enums";
-import { cn } from "@/lib/utils";
-import { createFileRoute } from "@tanstack/react-router";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useSelectedScope } from "@/contexts/scope-provider";
+import { useGetAllResources } from "@/hooks/resources/useGetAllResources";
+import { ResourceStatusTypes } from "@/lib/enums";
 
 export const Route = createFileRoute("/_app/dashboard")({
     component: Dashboard
 });
+
 function Dashboard() {
     const { t } = useTranslation();
-    const { selectedEvent } = useSelectedEvent();
-    const { event, loading, isError } = useUserEvent(selectedEvent);
+    const { selectedScope } = useSelectedScope();
+    const { resources, loading, isError } = useGetAllResources(selectedScope);
 
-    if (!selectedEvent) return <NoEventSelected />;
+    const stats = useMemo(() => {
+        const items = resources || [];
+        return {
+            active: items.filter((item) => item.status === ResourceStatusTypes.ACTIVE).length,
+            archived: items.filter((item) => item.status === ResourceStatusTypes.ARCHIVED).length,
+            draft: items.filter((item) => item.status === ResourceStatusTypes.DRAFT).length,
+            total: items.length
+        };
+    }, [resources]);
+
+    if (!selectedScope) return <NoScopeSelected />;
     if (loading) return <DashboardSkeleton />;
     if (isError) return <GenericError />;
 
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
             <div className="flex flex-wrap items-center justify-between gap-4">
-                <h1 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">{event?.name}</h1>
-                <div className="flex flex-wrap items-center gap-4">
-                    <CopyInput icon={event?.location.type === LocationTypes.ONSITE ? MapPin : event?.location.type === LocationTypes.VIRTUAL ? Laptop : event?.location.type === LocationTypes.HYBRID ? ArrowLeftRight : LinkIcon} value={event?.location.url || ""} className="w-2xs" />
-                    <ButtonGroup className="shrink-0">
-                        <Button>{event?.type}</Button>
-                        <Popover>
-                            <PopoverTrigger asChild>
-                                <Button variant="outline">
-                                    <CalendarIcon /> {t("dates")}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-max p-0" align="end">
-                                <Calendar mode="range" selected={{ from: event?.startDate || new Date(), to: event?.endDate || new Date() }} defaultMonth={event?.startDate || new Date()} onSelect={() => {}} />
-                            </PopoverContent>
-                        </Popover>
-                        <Button className={cn("text-white", event?.publish ? "bg-green-700" : "bg-red-700")}>{event?.publish ? t("public") : t("private")}</Button>
-                        <UpdateEventDialog />
-                    </ButtonGroup>
+                <div>
+                    <h1 className="text-2xl font-semibold tracking-tight md:text-3xl lg:text-4xl">{t("dashboard")}</h1>
+                    <p className="text-muted-foreground text-sm">{t("dashboard-description")}</p>
+                </div>
+                <Button asChild>
+                    <Link to="/resources">
+                        <Database data-icon="inline-start" />
+                        {t("resources")}
+                    </Link>
+                </Button>
+            </div>
+            <div className="grid grid-cols-1 divide-y rounded-md border md:grid-cols-4 md:divide-x md:divide-y-0">
+                <div className="flex flex-col gap-4 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-foreground text-2xl font-medium tracking-tight md:text-3xl">{stats.total}</h3>
+                        <Database className="text-muted-foreground size-5" />
+                    </div>
+                    <p className="text-muted-foreground text-sm font-medium">{t("total-resources")}</p>
+                </div>
+                <div className="flex flex-col gap-4 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-foreground text-2xl font-medium tracking-tight md:text-3xl">{stats.active}</h3>
+                        <Database className="text-muted-foreground size-5" />
+                    </div>
+                    <p className="text-muted-foreground text-sm font-medium">{t("active-resources")}</p>
+                </div>
+                <div className="flex flex-col gap-4 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-foreground text-2xl font-medium tracking-tight md:text-3xl">{stats.draft}</h3>
+                        <FileText className="text-muted-foreground size-5" />
+                    </div>
+                    <p className="text-muted-foreground text-sm font-medium">{t("draft-resources")}</p>
+                </div>
+                <div className="flex flex-col gap-4 px-6 py-4">
+                    <div className="flex items-center justify-between">
+                        <h3 className="text-foreground text-2xl font-medium tracking-tight md:text-3xl">{stats.archived}</h3>
+                        <Archive className="text-muted-foreground size-5" />
+                    </div>
+                    <p className="text-muted-foreground text-sm font-medium">{t("archived-resources")}</p>
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <AttendeesRegisteredChart key={`${event?._id}-attendees-registered-chart`} eventId={event?._id || ""} />
-                <RepliesRecievedChart key={`${event?._id}-replies-recieved-chart`} eventId={event?._id || ""} />
-            </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
-                <AttendeesAttendedChart key={`${event?._id}-attendees-attended-chart`} eventId={event?._id || ""} />
-                <ExclusivesAttendedChart key={`${event?._id}-exclusives-attended-chart`} eventId={event?._id || ""} />
-                <ParticipantsApprovedChart key={`${event?._id}-participants-approved-chart`} eventId={event?._id || ""} />
-                <EnrolleesApprovedChart key={`${event?._id}-enrollees-approved-chart`} eventId={event?._id || ""} />
+            <div className="grid gap-4 lg:grid-cols-2">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t("example-module")}</CardTitle>
+                        <CardDescription>{t("example-module-description")}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground text-sm">{t("example-module-content")}</p>
+                    </CardContent>
+                </Card>
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t("next-steps")}</CardTitle>
+                        <CardDescription>{t("next-steps-description")}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-muted-foreground text-sm">{t("next-steps-content")}</p>
+                    </CardContent>
+                </Card>
             </div>
         </div>
     );

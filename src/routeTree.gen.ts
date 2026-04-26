@@ -14,13 +14,9 @@ import { Route as AuthRouteImport } from './routes/_auth'
 import { Route as AppRouteImport } from './routes/_app'
 import { Route as BaseIndexRouteImport } from './routes/_base/index'
 import { Route as AuthSigninRouteImport } from './routes/_auth/signin'
-import { Route as AppFeedbackRouteImport } from './routes/_app/feedback'
 import { Route as AppDashboardRouteImport } from './routes/_app/dashboard'
-import { Route as AppAttendanceRouteImport } from './routes/_app/attendance'
-import { Route as AppWorkshopsIndexRouteImport } from './routes/_app/workshops/index'
-import { Route as AppParticipantsIndexRouteImport } from './routes/_app/participants/index'
-import { Route as AppWorkshopsWorkshopIdRouteImport } from './routes/_app/workshops/$workshopId'
-import { Route as AppParticipantsParticipantIdRouteImport } from './routes/_app/participants/$participantId'
+import { Route as AppResourcesIndexRouteImport } from './routes/_app/resources/index'
+import { Route as AppResourcesResourceIdRouteImport } from './routes/_app/resources/$resourceId'
 
 const BaseRoute = BaseRouteImport.update({
   id: '/_base',
@@ -44,117 +40,72 @@ const AuthSigninRoute = AuthSigninRouteImport.update({
   path: '/signin',
   getParentRoute: () => AuthRoute,
 } as any)
-const AppFeedbackRoute = AppFeedbackRouteImport.update({
-  id: '/feedback',
-  path: '/feedback',
-  getParentRoute: () => AppRoute,
-} as any)
 const AppDashboardRoute = AppDashboardRouteImport.update({
   id: '/dashboard',
   path: '/dashboard',
   getParentRoute: () => AppRoute,
 } as any)
-const AppAttendanceRoute = AppAttendanceRouteImport.update({
-  id: '/attendance',
-  path: '/attendance',
+const AppResourcesIndexRoute = AppResourcesIndexRouteImport.update({
+  id: '/resources/',
+  path: '/resources/',
   getParentRoute: () => AppRoute,
 } as any)
-const AppWorkshopsIndexRoute = AppWorkshopsIndexRouteImport.update({
-  id: '/workshops/',
-  path: '/workshops/',
+const AppResourcesResourceIdRoute = AppResourcesResourceIdRouteImport.update({
+  id: '/resources/$resourceId',
+  path: '/resources/$resourceId',
   getParentRoute: () => AppRoute,
 } as any)
-const AppParticipantsIndexRoute = AppParticipantsIndexRouteImport.update({
-  id: '/participants/',
-  path: '/participants/',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppWorkshopsWorkshopIdRoute = AppWorkshopsWorkshopIdRouteImport.update({
-  id: '/workshops/$workshopId',
-  path: '/workshops/$workshopId',
-  getParentRoute: () => AppRoute,
-} as any)
-const AppParticipantsParticipantIdRoute =
-  AppParticipantsParticipantIdRouteImport.update({
-    id: '/participants/$participantId',
-    path: '/participants/$participantId',
-    getParentRoute: () => AppRoute,
-  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof BaseIndexRoute
-  '/attendance': typeof AppAttendanceRoute
   '/dashboard': typeof AppDashboardRoute
-  '/feedback': typeof AppFeedbackRoute
+  '/resources/$resourceId': typeof AppResourcesResourceIdRoute
+  '/resources/': typeof AppResourcesIndexRoute
   '/signin': typeof AuthSigninRoute
-  '/participants/$participantId': typeof AppParticipantsParticipantIdRoute
-  '/workshops/$workshopId': typeof AppWorkshopsWorkshopIdRoute
-  '/participants/': typeof AppParticipantsIndexRoute
-  '/workshops/': typeof AppWorkshopsIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof BaseIndexRoute
-  '/attendance': typeof AppAttendanceRoute
   '/dashboard': typeof AppDashboardRoute
-  '/feedback': typeof AppFeedbackRoute
+  '/resources/$resourceId': typeof AppResourcesResourceIdRoute
+  '/resources': typeof AppResourcesIndexRoute
   '/signin': typeof AuthSigninRoute
-  '/participants/$participantId': typeof AppParticipantsParticipantIdRoute
-  '/workshops/$workshopId': typeof AppWorkshopsWorkshopIdRoute
-  '/participants': typeof AppParticipantsIndexRoute
-  '/workshops': typeof AppWorkshopsIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_app': typeof AppRouteWithChildren
   '/_auth': typeof AuthRouteWithChildren
   '/_base': typeof BaseRouteWithChildren
-  '/_app/attendance': typeof AppAttendanceRoute
   '/_app/dashboard': typeof AppDashboardRoute
-  '/_app/feedback': typeof AppFeedbackRoute
+  '/_app/resources/$resourceId': typeof AppResourcesResourceIdRoute
+  '/_app/resources/': typeof AppResourcesIndexRoute
   '/_auth/signin': typeof AuthSigninRoute
   '/_base/': typeof BaseIndexRoute
-  '/_app/participants/$participantId': typeof AppParticipantsParticipantIdRoute
-  '/_app/workshops/$workshopId': typeof AppWorkshopsWorkshopIdRoute
-  '/_app/participants/': typeof AppParticipantsIndexRoute
-  '/_app/workshops/': typeof AppWorkshopsIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
-    | '/attendance'
     | '/dashboard'
-    | '/feedback'
+    | '/resources/$resourceId'
+    | '/resources/'
     | '/signin'
-    | '/participants/$participantId'
-    | '/workshops/$workshopId'
-    | '/participants/'
-    | '/workshops/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
-    | '/attendance'
     | '/dashboard'
-    | '/feedback'
+    | '/resources/$resourceId'
+    | '/resources'
     | '/signin'
-    | '/participants/$participantId'
-    | '/workshops/$workshopId'
-    | '/participants'
-    | '/workshops'
   id:
     | '__root__'
     | '/_app'
     | '/_auth'
     | '/_base'
-    | '/_app/attendance'
     | '/_app/dashboard'
-    | '/_app/feedback'
+    | '/_app/resources/$resourceId'
+    | '/_app/resources/'
     | '/_auth/signin'
     | '/_base/'
-    | '/_app/participants/$participantId'
-    | '/_app/workshops/$workshopId'
-    | '/_app/participants/'
-    | '/_app/workshops/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -200,13 +151,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthSigninRouteImport
       parentRoute: typeof AuthRoute
     }
-    '/_app/feedback': {
-      id: '/_app/feedback'
-      path: '/feedback'
-      fullPath: '/feedback'
-      preLoaderRoute: typeof AppFeedbackRouteImport
-      parentRoute: typeof AppRoute
-    }
     '/_app/dashboard': {
       id: '/_app/dashboard'
       path: '/dashboard'
@@ -214,62 +158,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AppDashboardRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/attendance': {
-      id: '/_app/attendance'
-      path: '/attendance'
-      fullPath: '/attendance'
-      preLoaderRoute: typeof AppAttendanceRouteImport
+    '/_app/resources/': {
+      id: '/_app/resources/'
+      path: '/resources'
+      fullPath: '/resources/'
+      preLoaderRoute: typeof AppResourcesIndexRouteImport
       parentRoute: typeof AppRoute
     }
-    '/_app/workshops/': {
-      id: '/_app/workshops/'
-      path: '/workshops'
-      fullPath: '/workshops/'
-      preLoaderRoute: typeof AppWorkshopsIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/participants/': {
-      id: '/_app/participants/'
-      path: '/participants'
-      fullPath: '/participants/'
-      preLoaderRoute: typeof AppParticipantsIndexRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/workshops/$workshopId': {
-      id: '/_app/workshops/$workshopId'
-      path: '/workshops/$workshopId'
-      fullPath: '/workshops/$workshopId'
-      preLoaderRoute: typeof AppWorkshopsWorkshopIdRouteImport
-      parentRoute: typeof AppRoute
-    }
-    '/_app/participants/$participantId': {
-      id: '/_app/participants/$participantId'
-      path: '/participants/$participantId'
-      fullPath: '/participants/$participantId'
-      preLoaderRoute: typeof AppParticipantsParticipantIdRouteImport
+    '/_app/resources/$resourceId': {
+      id: '/_app/resources/$resourceId'
+      path: '/resources/$resourceId'
+      fullPath: '/resources/$resourceId'
+      preLoaderRoute: typeof AppResourcesResourceIdRouteImport
       parentRoute: typeof AppRoute
     }
   }
 }
 
 interface AppRouteChildren {
-  AppAttendanceRoute: typeof AppAttendanceRoute
   AppDashboardRoute: typeof AppDashboardRoute
-  AppFeedbackRoute: typeof AppFeedbackRoute
-  AppParticipantsParticipantIdRoute: typeof AppParticipantsParticipantIdRoute
-  AppWorkshopsWorkshopIdRoute: typeof AppWorkshopsWorkshopIdRoute
-  AppParticipantsIndexRoute: typeof AppParticipantsIndexRoute
-  AppWorkshopsIndexRoute: typeof AppWorkshopsIndexRoute
+  AppResourcesResourceIdRoute: typeof AppResourcesResourceIdRoute
+  AppResourcesIndexRoute: typeof AppResourcesIndexRoute
 }
 
 const AppRouteChildren: AppRouteChildren = {
-  AppAttendanceRoute: AppAttendanceRoute,
   AppDashboardRoute: AppDashboardRoute,
-  AppFeedbackRoute: AppFeedbackRoute,
-  AppParticipantsParticipantIdRoute: AppParticipantsParticipantIdRoute,
-  AppWorkshopsWorkshopIdRoute: AppWorkshopsWorkshopIdRoute,
-  AppParticipantsIndexRoute: AppParticipantsIndexRoute,
-  AppWorkshopsIndexRoute: AppWorkshopsIndexRoute,
+  AppResourcesResourceIdRoute: AppResourcesResourceIdRoute,
+  AppResourcesIndexRoute: AppResourcesIndexRoute,
 }
 
 const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)

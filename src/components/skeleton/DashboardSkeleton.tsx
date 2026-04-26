@@ -1,26 +1,20 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function DashboardSkeleton() {
+function DashboardSkeleton() {
     return (
         <div className="flex flex-1 flex-col gap-4 p-4">
-            <div className="flex items-center justify-between">
-                <Skeleton className="h-8 w-32" />
-                <div className="hidden gap-4 lg:flex">
-                    <Skeleton className="h-8 w-32" />
-                    <Skeleton className="h-8 w-32" />
-                    <Skeleton className="h-8 w-32" />
-                </div>
+            <div className="flex flex-wrap items-center justify-between gap-4">
+                <Skeleton className="h-10 w-64 max-w-full" />
+                <Skeleton className="h-9 w-32" />
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                <Skeleton className="h-[445px] w-full" />
-                <Skeleton className="h-[445px] w-full" />
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                {[...Array(3)].map((_, index) => (
+                    <Skeleton key={index} className="h-28 w-full rounded-md" />
+                ))}
             </div>
-            <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 xl:grid-cols-4">
-                <Skeleton className="h-[530px] w-full" />
-                <Skeleton className="h-[530px] w-full" />
-                <Skeleton className="h-[530px] w-full" />
-                <Skeleton className="h-[530px] w-full" />
-            </div>
+            <Skeleton className="h-72 w-full rounded-md" />
         </div>
     );
 }
+
+export default DashboardSkeleton;

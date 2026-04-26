@@ -1,9 +1,9 @@
 import { AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { Link } from "@tanstack/react-router";
 
 import { Button } from "@/components/ui/button";
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from "@/components/ui/empty";
-import { Link } from "@tanstack/react-router";
 
 function GenericError() {
     const { t } = useTranslation();
@@ -19,7 +19,7 @@ function GenericError() {
                     <EmptyDescription>{t("unexpected-error-description")}</EmptyDescription>
                 </EmptyHeader>
                 <EmptyContent>
-                    <Button size="lg" onClick={() => window.location.replace("/dashboard")}>
+                    <Button size="lg" onClick={() => window.location.reload()}>
                         {t("reload")}
                     </Button>
                     <EmptyDescription>

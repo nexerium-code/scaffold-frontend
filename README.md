@@ -1,88 +1,67 @@
-# {Name}
+# Scaffold Frontend
 
-> {Description}
-
-## Table of Contents
-
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-    - [Installation](#installation)
-    - [Running the App](#running-the-app)
-    - [Code Quality](#code-quality)
-- [Environment Variables](#environment-variables)
-- [Project Structure](#project-structure)
-- [Maintenance](#maintenance)
+Reusable Vite + React frontend scaffold for product-style applications.
 
 ## Overview
 
-This frontend provides a complete {Description} Vite SPA with the following aspects:
+This repository is a starter template, not a finished product. It preserves the shared frontend architecture and includes small generic `scopes` and `resources` example modules to demonstrate the intended structure for future features.
 
-- **{Aspects}**
+## Stack
+
+- Vite 7, React 19, TypeScript strict
+- TanStack Router, Query, and Table
+- Clerk authentication
+- Tailwind CSS 4 and shadcn/ui primitives
+- React Hook Form and Zod
+- i18next with English and Arabic
+- Axios through `src/services/API.ts`
+- sonner mutation toasts
 
 ## Getting Started
 
-### Installation
-
 ```bash
-# Clone the repository
-git clone {Project_Link}
-
-# Navigate to project directory
-cd {Directory_Path}
-
-# Install dependencies
 npm install
-```
-
-### Running the App
-
-```bash
-# Configure environment variables (env, API Keys, Endpoints, etc.)
-# Start development server
 npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
 ```
 
-### Code Quality
+Copy `.env.example` to your local environment file and provide:
 
 ```bash
-# Lint codebase
+VITE_BE_ENDPOINT=
+VITE_CLERK_PUBLISHABLE_KEY=
+VITE_ENV=DEV
+```
+
+## Verification
+
+```bash
 npm run lint
-
-# Check for unused dependencies
-npx knip
-
-# Check for outdated dependencies
-npm outdated
+npm run build
 ```
 
-## Environment Variables
+## Structure
 
-Ensure that your enviroment variables are inline (Use Doppler)
-
-## Maintenance
-
-### Updating Dependencies
-
-```bash
-# Check for outdated packages
-npm outdated
-
-# Update to compatible versions
-npm update
-
-# For major version updates:
-# 1. Mirror package.json, tsconfig files and eslint.config.js from the offical docs "https://vite.new/react-ts"
-# 2. Update package.json manually or using Version Lens extension
-# 3. Remove existing dependencies
-rm -rf node_modules package-lock.json
-
-# 3. Reinstall
-npm install
+```txt
+src/
+    components/
+        _app/
+        empty-states/
+        general/
+        resources/
+        scopes/
+        skeleton/
+        ui/
+    contexts/
+    hooks/
+        resources/
+        scopes/
+    lib/
+    locales/
+    routes/
+    services/
+        API.ts
+        resources/
+        scopes/
 ```
+
+Use the example modules as references for API services, schemas, TanStack Query hooks, forms, tables, mutations, route params, translations, and selected-scope context. Replace them with real project features when starting a new application.

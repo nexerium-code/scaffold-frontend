@@ -152,17 +152,6 @@
     display: none; /* Chrome, Safari and Opera */
 }
 
-/* Layout Container */
-.layout-container {
-    width: 100%;
-    max-width: min(64rem, 100%);
-    margin-inline: auto;
-}
-
-.test {
-    border: 2px solid red;
-}
-
 /* Hide Clerk shimmer animation */
 .cl-internal-cieags {
     display: none;
@@ -171,33 +160,4 @@
 /* Rotate Clerk button arrow icon in RTL */
 [dir="rtl"] .cl-buttonArrowIcon {
     transform: rotate(180deg);
-}
-
-/* Process Timeline */
-@keyframes timeline-shimmer {
-    0% {
-        transform: translateY(-100%);
-    }
-    100% {
-        transform: translateY(200%);
-    }
-}
-
-@keyframes node-pulse {
-    0%,
-    100% {
-        box-shadow: 0 0 0 0 var(--primary-glow);
-    }
-    50% {
-        box-shadow: 0 0 20px 6px var(--primary-glow);
-    }
-}
-
-.timeline-node {
-    --primary-glow: oklch(0.488 0.243 264.376 / 0.3);
-    animation: node-pulse 3s ease-in-out infinite;
-}
-
-.dark .timeline-node {
-    --primary-glow: oklch(0.42 0.18 266 / 0.35);
 }

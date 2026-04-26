@@ -1,88 +1,53 @@
-import { BookOpen, ClipboardCheck, Globe, PieChart, Send } from "lucide-react";
+import { Database, LayoutDashboard } from "lucide-react";
 import { useTranslation } from "react-i18next";
-
-import AppEventsSwitcher from "@/components/_app/AppEventsSwitcher";
-import AppSystemPrefrences from "@/components/_app/AppSystemPrefrences";
-import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
-import { useSelectedEvent } from "@/contexts/event-provider";
-import { MetaData, RoleTypes } from "@/lib/enums";
-import { cn } from "@/lib/utils";
 import { useUser } from "@clerk/clerk-react";
 import { Link, useLocation } from "@tanstack/react-router";
+
+import AppScopeSwitcher from "@/components/_app/AppScopeSwitcher";
+import AppSystemPreferences from "@/components/_app/AppSystemPreferences";
+import { Sidebar, SidebarContent, SidebarFooter, SidebarGroup, SidebarGroupLabel, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem, SidebarRail, SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useSelectedScope } from "@/contexts/scope-provider";
+import { MetaData, RoleTypes } from "@/lib/enums";
+import { cn } from "@/lib/utils";
 
 function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     const { user } = useUser();
     const { t, i18n } = useTranslation();
-    const { selectedEvent } = useSelectedEvent();
+    const { selectedScope } = useSelectedScope();
     const pathname = useLocation({ select: (location) => location.pathname });
     const { state } = useSidebar();
 
-    // Grab the user role and permissions from the user's public metadata
     const userRole = (user?.publicMetadata as MetaData)?.role;
-    const userSelectedEventPermissions = (user?.publicMetadata as MetaData)?.permissions?.[selectedEvent];
+    const userSelectedScopePermissions = (user?.publicMetadata as MetaData)?.permissions?.[selectedScope];
 
-    // Derive the visibility of the navigation items
-    const showAttendanceNavigation = userRole === RoleTypes.ADMIN || userSelectedEventPermissions?.attendance;
-    const showParticipantsNavigation = userRole === RoleTypes.ADMIN || userSelectedEventPermissions?.participants;
-    const showWorkshopsNavigation = userRole === RoleTypes.ADMIN || userSelectedEventPermissions?.workshops;
-    const showFeedbacksNavigation = userRole === RoleTypes.ADMIN || userSelectedEventPermissions?.feedbacks;
-    const showCreateEventButton = userRole === RoleTypes.ADMIN;
+    const showResourcesNavigation = userRole === RoleTypes.ADMIN || userSelectedScopePermissions?.resources;
+    const showCreateScopeButton = userRole === RoleTypes.ADMIN;
 
     return (
         <Sidebar collapsible="icon" side={i18n.language === "en-US" ? "left" : "right"} {...props}>
             <SidebarHeader className={cn("border-b", state === "expanded" && "h-12 flex-row items-center justify-between")}>
-                <AppEventsSwitcher showCreateEventButton={showCreateEventButton} />
+                <AppScopeSwitcher showCreateScopeButton={showCreateScopeButton} />
                 <SidebarTrigger className="hidden md:inline-flex" />
             </SidebarHeader>
             <SidebarContent>
-                {selectedEvent !== "" && (
+                {selectedScope !== "" && (
                     <SidebarGroup>
                         <SidebarGroupLabel>{t("platform")}</SidebarGroupLabel>
                         <SidebarMenu>
                             <SidebarMenuItem>
                                 <SidebarMenuButton isActive={pathname === "/dashboard"} tooltip={t("dashboard")} asChild>
                                     <Link to="/dashboard">
-                                        <PieChart />
+                                        <LayoutDashboard />
                                         <span>{t("dashboard")}</span>
                                     </Link>
                                 </SidebarMenuButton>
                             </SidebarMenuItem>
-                            {showAttendanceNavigation && (
+                            {showResourcesNavigation && (
                                 <SidebarMenuItem>
-                                    <SidebarMenuButton isActive={pathname.startsWith("/attendance")} tooltip={t("attendance")} asChild>
-                                        <Link to="/attendance">
-                                            <ClipboardCheck />
-                                            <span>{t("attendance")}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            )}
-                            {showParticipantsNavigation && (
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton isActive={pathname.startsWith("/participants")} tooltip={t("participants")} asChild>
-                                        <Link to="/participants">
-                                            <Globe />
-                                            <span>{t("participants")}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            )}
-                            {showWorkshopsNavigation && (
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton isActive={pathname.startsWith("/workshop")} tooltip={t("workshops")} asChild>
-                                        <Link to="/workshops">
-                                            <BookOpen />
-                                            <span>{t("workshops")}</span>
-                                        </Link>
-                                    </SidebarMenuButton>
-                                </SidebarMenuItem>
-                            )}
-                            {showFeedbacksNavigation && (
-                                <SidebarMenuItem>
-                                    <SidebarMenuButton isActive={pathname.startsWith("/feedback")} tooltip={t("feedbacks")} asChild>
-                                        <Link to="/feedback">
-                                            <Send />
-                                            <span>{t("feedbacks")}</span>
+                                    <SidebarMenuButton isActive={pathname.startsWith("/resources")} tooltip={t("resources")} asChild>
+                                        <Link to="/resources">
+                                            <Database />
+                                            <span>{t("resources")}</span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
@@ -95,7 +60,7 @@ function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 <SidebarFooter>
                     <SidebarGroup>
                         <SidebarGroupLabel>{t("preferences")}</SidebarGroupLabel>
-                        <AppSystemPrefrences />
+                        <AppSystemPreferences />
                     </SidebarGroup>
                 </SidebarFooter>
             )}

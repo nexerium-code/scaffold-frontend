@@ -1,5 +1,5 @@
 import { Moon } from "lucide-react";
-import { useEffect } from "react";
+import { useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 
 import { Button } from "@/components/ui/button";
@@ -10,22 +10,23 @@ function AppThemeSwitcher() {
     const { t } = useTranslation();
     const { theme, setTheme } = useTheme();
 
-    function toggleTheme() {
+    const toggleTheme = useCallback(() => {
         setTheme(theme === "dark" ? "light" : "dark");
-    }
+    }, [setTheme, theme]);
 
     useEffect(() => {
-        function handleKeyDown(e: KeyboardEvent) {
-            if (e.key === "d" || e.key === "D") {
-                const tag = (e.target as HTMLElement)?.tagName;
-                if (tag === "INPUT" || tag === "TEXTAREA" || (e.target as HTMLElement)?.isContentEditable) return;
+        function handleKeyDown(event: KeyboardEvent) {
+            if (event.key === "d" || event.key === "D") {
+                const target = event.target as HTMLElement;
+                const tag = target?.tagName;
+                if (tag === "INPUT" || tag === "TEXTAREA" || target?.isContentEditable) return;
                 toggleTheme();
             }
         }
 
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
-    });
+    }, [toggleTheme]);
 
     return (
         <Tooltip>

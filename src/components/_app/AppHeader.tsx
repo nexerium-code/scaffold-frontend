@@ -1,13 +1,12 @@
 import { Fragment } from "react";
 import { useTranslation } from "react-i18next";
-
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
-import { useBreadcrumbs } from "@/hooks/useBreadCrumbs";
 import { UserButton } from "@clerk/clerk-react";
 import { Link } from "@tanstack/react-router";
 
-import { Separator } from "../ui/separator";
-import { SidebarTrigger } from "../ui/sidebar";
+import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useBreadcrumbs } from "@/hooks/useBreadCrumbs";
 
 function AppHeader() {
     const { t } = useTranslation();

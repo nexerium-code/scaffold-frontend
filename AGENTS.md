@@ -24,7 +24,7 @@ Default to local precedent when rules are silent. If written rules and local pre
 
 Use this stack unless the user explicitly approves a change:
 
-- Vite 7
+- Vite 8
 - React 19
 - TypeScript strict
 - npm with `package-lock.json`

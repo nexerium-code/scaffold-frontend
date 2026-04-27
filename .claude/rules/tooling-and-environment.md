@@ -4,7 +4,7 @@ The toolchain is fixed. New projects spun up to match this house style should re
 
 ## 1 — Build & dev
 
-- **Vite 7** with `@vitejs/plugin-react`, `@tailwindcss/vite`, and `@tanstack/router-plugin/vite` (configured with `target: "react"`, `autoCodeSplitting: true`).
+- **Vite 8** with `@vitejs/plugin-react`, `@tailwindcss/vite`, and `@tanstack/router-plugin/vite` (configured with `target: "react"`, `autoCodeSplitting: true`).
 - `vite.config.ts` declares the alias `@ → ./src` via `path.resolve`. The same alias is mirrored in `tsconfig.app.json` `paths`.
 - Scripts in `package.json`:
     - `dev` → `vite`

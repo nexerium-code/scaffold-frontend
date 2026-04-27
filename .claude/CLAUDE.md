@@ -1,6 +1,6 @@
-# {Name}
+# sideproject-fe
 
-{Description}
+Front-end for the admin-side events management app.
 
 ## Top priority: consistency
 

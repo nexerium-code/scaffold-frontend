@@ -5,7 +5,7 @@ alwaysApply: true
 
 # Stack (do not swap without explicit approval)
 
-- **Build:** Vite 7 · **UI:** React 19 · **Lang:** TypeScript strict · **Package manager:** npm
+- **Build:** Vite 8 · **UI:** React 19 · **Lang:** TypeScript strict · **Package manager:** npm
 - **Routing:** TanStack Router (file-based) · **Server state:** TanStack Query · **Tables:** TanStack Table
 - **Forms:** React Hook Form + Zod (`zodResolver`) · **HTTP:** Axios only via `src/services/API.ts`
 - **UI kit:** shadcn/ui in `src/components/ui` · **Icons:** lucide-react · **Auth:** Clerk

@@ -128,13 +128,22 @@
 }
 
 /* Scrollbar Styling */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+}
+
 ::-webkit-scrollbar {
-    width: 8px;
+    width: 5px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
     background: var(--border);
-    border-radius: 9999px;
+    border-radius: 5px;
 }
 
 /* Clip scrollbar within dialog rounded corners */

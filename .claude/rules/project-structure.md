@@ -5,7 +5,7 @@ How files and folders **must** be organised. The shape applies to any frontend r
 ## 0 — Global
 
 - **Language** — TypeScript only (`.ts` / `.tsx`).
-- **Imports** — Use the absolute alias (`@/* → ./src/*`) defined in `tsconfig.app.json`. Never traverse above `src/`. Inside `src/`, prefer `@/...` over relative paths for any cross-folder import.
+- **Imports** — Use the absolute alias (`@/* → ./src/*`) defined in `tsconfig.app.json` through explicit `paths`, without `compilerOptions.baseUrl`. Never traverse above `src/`. Inside `src/`, prefer `@/...` over relative paths for any cross-folder import.
 - **File naming**
     - Components → `PascalCase.tsx` (one component per file).
     - Hooks → `use<PascalCase>.ts` (e.g. `useCreateWidget.ts`, `useGetAllWidgets.ts`). One hook per file.

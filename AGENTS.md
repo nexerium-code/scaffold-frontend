@@ -568,7 +568,8 @@ TypeScript:
 
 - Strict mode stays enabled.
 - Do not relax unused checks or compiler strictness.
-- Keep `@/*` mapped to `./src/*`.
+- Keep `@/*` mapped to `./src/*` with explicit `paths` entries.
+- Do not add `compilerOptions.baseUrl`; TypeScript 6 deprecates it and TypeScript 7 removes it.
 
 ESLint:
 

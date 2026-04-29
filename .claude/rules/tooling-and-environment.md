@@ -5,7 +5,7 @@ The toolchain is fixed. New projects spun up to match this house style should re
 ## 1 — Build & dev
 
 - **Vite 8** with `@vitejs/plugin-react`, `@tailwindcss/vite`, and `@tanstack/router-plugin/vite` (configured with `target: "react"`, `autoCodeSplitting: true`).
-- `vite.config.ts` declares the alias `@ → ./src` via `path.resolve`. The same alias is mirrored in `tsconfig.app.json` `paths`.
+- `vite.config.ts` declares the alias `@ → ./src` via `path.resolve`. The same alias is mirrored in `tsconfig.app.json` `paths` without `compilerOptions.baseUrl`.
 - Scripts in `package.json`:
     - `dev` → `vite`
     - `build` → `tsc -b && vite build`
@@ -31,7 +31,6 @@ The toolchain is fixed. New projects spun up to match this house style should re
         "erasableSyntaxOnly": true,
         "noFallthroughCasesInSwitch": true,
         "noUncheckedSideEffectImports": true,
-        "baseUrl": ".",
         "paths": { "@/*": ["./src/*"] }
     },
     "include": ["src"]
@@ -42,6 +41,7 @@ Notes:
 
 - `verbatimModuleSyntax` is intentionally **disabled** because shadcn primitives currently break under it.
 - Do not relax `strict` or any `noUnused*` flag.
+- Do not add `compilerOptions.baseUrl`; TypeScript 6 deprecates it and TypeScript 7 removes it. Keep alias targets explicit in `paths`.
 
 ## 3 — ESLint (`eslint.config.js`)
 
@@ -85,7 +85,7 @@ Notes:
 
 | Place                      | Mapping                                                                                                      |
 | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| `tsconfig.app.json`        | `@/* → ./src/*`                                                                                              |
+| `tsconfig.app.json`        | `paths`: `@/* → ./src/*` with no `compilerOptions.baseUrl`                                                   |
 | `vite.config.ts`           | `@` → `path.resolve(__dirname, "./src")`                                                                     |
 | `components.json` (shadcn) | `components → @/components`, `ui → @/components/ui`, `utils → @/lib/utils`, `lib → @/lib`, `hooks → @/hooks` |
 

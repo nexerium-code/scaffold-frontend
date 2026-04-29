@@ -28,7 +28,7 @@ Do not create empty placeholder files; omit what a feature does not need.
 
 # Imports
 
-- Use `@/` → `src/` (see `tsconfig`). Do not import above `src/`.
+- Use `@/` → `src/` through explicit `paths` entries (no `compilerOptions.baseUrl`). Do not import above `src/`.
 - Order: (1) external packages, (2) blank line, (3) `@/` imports.
 
 # Naming and exports

@@ -27,7 +27,7 @@ When asked to do something, **default to the current structure** of the repo and
 
 ## Import alias
 
-- `@/` maps to `./src/*` (see `tsconfig.json`).
+- `@/` maps to `./src/*` through explicit `paths` entries (no `compilerOptions.baseUrl`).
 - Use absolute imports only; do not traverse above `src/`.
 
 ## Directory map (`src/`)

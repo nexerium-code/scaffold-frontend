@@ -27,7 +27,7 @@ If the task seems to require a new library, ask first. Do not add a dependency s
 - TypeScript only (`.ts` / `.tsx`). No JavaScript.
 - Strict mode is on. `noUnusedLocals`, `noUnusedParameters`, `noFallthroughCasesInSwitch`, `noUncheckedSideEffectImports` are all enforced.
 - Prefer `type` over `interface` for object shapes. Use `interface` only when extending a third-party interface that requires it.
-- Imports use the `@/` alias (`@/* → ./src/*`). Never use relative imports that traverse above `src/`. Inside `src/`, prefer `@/...` over relative `./...` for any cross-folder import.
+- Imports use the `@/` alias (`@/* → ./src/*` through explicit `paths`, without `compilerOptions.baseUrl`). Never use relative imports that traverse above `src/`. Inside `src/`, prefer `@/...` over relative `./...` for any cross-folder import.
 - Prefix intentionally unused identifiers with `_` (matches the eslint config: `varsIgnorePattern`, `argsIgnorePattern`, `caughtErrorsIgnorePattern` all `^_`).
 
 ## 4 — React component style

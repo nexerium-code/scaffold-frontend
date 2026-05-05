@@ -16,7 +16,7 @@ Group prefixes used for components:
 
 - `App*` for global chrome (`AppHeader`, `AppSidebar`, `AppLanguageSwitcher`, etc.).
 - `Create<Resource>Dialog` / `Update<Resource>Dialog` / `View<Resource>Sheet` for resource modals.
-- `<Feature>Table` for the table composer; `<Feature>Table<Aspect>` for its sub-pieces (`<Feature>TableMain`, `<Feature>TableColumnDefs`, `<Feature>TableSearch`, `<Feature>TableFilter`, `<Feature>TableVisibility`, `<Feature>TableExport`, `<Feature>TablePagination`, `<Feature>TableActionCell`, `<Feature>TableDelete`, `<Feature>TableResetSelection`).
+- `<Feature>Table` for the table or headless collection composer; `<Feature>Table<Aspect>` for its sub-pieces (`<Feature>TableMain`, `<Feature>TableColumnDefs`, `<Feature>TableSearch`, `<Feature>TableFilter`, `<Feature>TableVisibility`, `<Feature>TableExport`, `<Feature>TablePagination`, `<Feature>TableActionCell`, `<Feature>TableDelete`, `<Feature>TableResetSelection`) and `<Feature>Card` for card-backed collection rows.
 - `<Feature>Skeleton` for skeletons under `components/skeleton/`.
 - `No<Thing>Found` / `No<Thing>Selected` / `GenericError` / `NotFound` for empty states under `components/empty-states/`.
 

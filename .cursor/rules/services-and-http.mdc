@@ -20,7 +20,7 @@ alwaysApply: false
 - Top of file: file-local `ENDPOINT` using `import.meta.env` (`VITE_ENV`, `VITE_BE_ENDPOINT`, dev port pattern as already used in the repo).
 - Export async functions (camelCase) and entity-related `type`s.
 - Return parsed response data from functions.
-- **Creates:** accept `idempotencyKey`, send header `Idempotency-Key`.
+- **Creates:** accept `idempotencyKey` and send `Idempotency-Key` only when the backend contract supports idempotency. Current idempotent resource creates include events, exclusives, feedback, participants, and workshops. Access grants and other endpoints without that contract use plain `API.POST`.
 - **Bulk actions:** body shape `{ targets: ids }` unless the backend contract differs—match existing callers.
 - **Uploads:** `POST` for presigned URL, `PUT` with `File` to storage, return/store public URL. Keep helpers private at bottom of same file.
 

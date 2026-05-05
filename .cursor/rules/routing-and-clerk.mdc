@@ -28,7 +28,9 @@ alwaysApply: false
 # Auth model
 
 - Clerk only—no custom JWT storage, refresh logic, or hand-rolled sign-in forms.
-- Roles/permissions: Clerk **publicMetadata**; types in `lib/enums.ts`; UI gates like `role === RoleTypes.ADMIN || permissions?.[scope]?.feature`. Treat as UX only—backend is authoritative.
+- Roles/permissions: fetched from `GET /access/:scopeId` via `useGetAccess(scopeId)` (`hooks/access`); response is a discriminated union (`AdminAccess | StaffAccess`) typed in `services/access/Access.api.ts`. UI gates like `access?.role === RoleTypes.ADMIN || (access?.role === RoleTypes.STAFF && access.permissions?.feature)`. Fail closed on undefined/401/403. Global capabilities (e.g. create-event) cannot be gated by this endpoint—render for any signed-in user. Treat all gates as UX only—backend is authoritative.
+
+- Access grant management uses the grants endpoints under `/access/grants/:eventId`. Grant records are `AccessAccount` rows keyed by `clerkId`, and admin-only surfaces such as the access nav item render only for `RoleTypes.ADMIN`.
 
 # Route modules
 

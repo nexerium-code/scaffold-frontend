@@ -74,26 +74,35 @@ Rules:
 - The Clerk-managed sign-in screen is mounted at `/signin` via `<SignIn />` from `@clerk/clerk-react`. Don't build a custom sign-in form.
 - The header avatar / sign-out menu is `<UserButton />` from `@clerk/clerk-react`, placed in `AppHeader.tsx`.
 
-## 4 — Reading user metadata
+## 4 — Reading role and permissions (per-scope access endpoint)
 
-User role and per-scope permissions live in Clerk **public metadata**. The exact shape is project-specific and lives in `src/lib/enums.ts`:
+User role and per-scope permissions are fetched from the backend via `GET /access/:scopeId` — never from Clerk `publicMetadata`. The response is a discriminated union; the exact shape lives in `src/services/access/Access.api.ts`:
 
 ```ts
 type Permission = { /* per-feature booleans */ };
-type MetaData = { role: RoleType; permissions: Record<string, Permission> | null };
+type AdminAccess = { eventId: string; role: typeof RoleTypes.ADMIN; hasAccess: true };
+type StaffAccess = { eventId: string; role: typeof RoleTypes.STAFF; hasAccess: true; permissions: Permission };
+type Access = AdminAccess | StaffAccess;
+type AccessAccount = { clerkId: string; email: string | null; name: string | null; imageUrl: string | null; permissions: Permission };
 ```
 
-Read it via `useUser()`:
+Read it via the `useGetAccess` hook:
 
 ```tsx
-const { user } = useUser();
-const userRole = (user?.publicMetadata as MetaData)?.role;
-const perm = (user?.publicMetadata as MetaData)?.permissions?.[selectedScopeId];
-const showFeatureNav = userRole === RoleTypes.ADMIN || perm?.<feature>;
+const { selectedEvent } = useSelectedEvent();
+const { access } = useGetAccess(selectedEvent);
+
+const isAdmin = access?.role === RoleTypes.ADMIN;
+const permissions = access?.role === RoleTypes.STAFF ? access.permissions : null;
+const showFeatureNav = isAdmin || permissions?.<feature>;
 ```
 
-- The `MetaData` and `RoleTypes` types live in `src/lib/enums.ts`.
-- Always derive UI gating from a combination of `role === RoleTypes.ADMIN` **OR** the per-scope permission boolean.
+- `RoleTypes` lives in `src/lib/enums.ts`. The per-scope `Permission` and `Access` types live in `src/services/access/Access.api.ts`.
+- Access grant management uses `GET /access/grants/:eventId`, `POST /access/grants/:eventId`, `PATCH /access/grants/:eventId/:clerkId`, and `DELETE /access/grants/:eventId/:clerkId`. Grant rows are `AccessAccount` records keyed by `clerkId`, not `_id`.
+- The hook is keyed `["access", scopeId]` with `enabled: !!scopeId` and `retry: false`. A 401/403 leaves `access` undefined, which fails closed (no nav, no admin controls).
+- Always derive UI gating from `role === RoleTypes.ADMIN` **OR** the per-scope permission boolean.
+- Admin-only surfaces such as the access nav item render only when `access?.role === RoleTypes.ADMIN`. Direct route access still relies on backend authorization and renders the normal route error state if the access query fails.
+- Capabilities not scoped to a single event (e.g. "create event") cannot be gated by this endpoint — render them for any signed-in user and let the backend enforce.
 - Don't trust client-side gates for data security — they're UX hints only. The backend enforces real authorization.
 
 ## 5 — Sign-out and post-auth redirect

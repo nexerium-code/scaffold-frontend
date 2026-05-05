@@ -214,9 +214,12 @@ Route gating:
 
 User roles and permissions:
 
-- Store role and scoped permissions in Clerk public metadata.
-- Types live in `src/lib/enums.ts`.
-- UI gates use `role === RoleTypes.ADMIN || permissions?.[selectedScope]?.feature`.
+- Fetch from the backend via `GET /access/:scopeId` using the `useGetAccess(scopeId)` hook (`src/hooks/access/`). Never read role/permissions from Clerk `publicMetadata`.
+- The response is a discriminated union (`AdminAccess | StaffAccess`) typed in `src/services/access/Access.api.ts`. `RoleTypes` lives in `src/lib/enums.ts`.
+- Access grant management uses `GET /access/grants/:eventId`, `POST /access/grants/:eventId`, `PATCH /access/grants/:eventId/:clerkId`, and `DELETE /access/grants/:eventId/:clerkId`. Grant rows are `AccessAccount` records keyed by `clerkId`, not `_id`.
+- UI gates use `access?.role === RoleTypes.ADMIN || (access?.role === RoleTypes.STAFF && access.permissions?.feature)`. Fail closed when `access` is undefined (loading / 401 / 403).
+- Admin-only surfaces such as the access management nav item render only for `RoleTypes.ADMIN`; direct route access still relies on backend authorization and renders `GenericError` on access-query failure.
+- Global capabilities not scoped to a single event (e.g. create-event) cannot be gated by this endpoint — render for any signed-in user and let the backend reject.
 - Treat client-side gating as UX only; backend authorization is authoritative.
 
 ## 8. API and Services
@@ -246,7 +249,7 @@ API files:
 - Export async network functions.
 - Return parsed response data.
 - Keep upload helper functions private at the bottom of the file.
-- Creates accept an `idempotencyKey` and forward it as the `Idempotency-Key` header.
+- Creates accept an `idempotencyKey` and forward it as the `Idempotency-Key` header only when the backend endpoint supports idempotency. Current idempotent resource creates include events, exclusives, feedback, participants, and workshops. Access grants and other endpoints without an idempotency contract use plain `API.POST`.
 - Bulk actions send `{ targets: ids }`.
 
 File uploads:
@@ -279,7 +282,8 @@ Read hooks:
 
 Mutation hooks:
 
-- Creates use `useIdempotentMutation`.
+- Creates use `useIdempotentMutation` when the service function accepts an idempotency key and forwards the `Idempotency-Key` header.
+- Creates without a backend idempotency contract, including `useGrantAccess`, use plain `useMutation` while keeping the standard mutation lifecycle.
 - Updates and deletes use `useMutation`.
 - Accept `successCallBack?: () => void`.
 - Mutation arguments are one object for multi-value mutations.
@@ -357,7 +361,7 @@ Dynamic forms:
 
 ## 11. Tables
 
-Use TanStack Table for list views with filtering, sorting, selection, pagination, or export.
+Use TanStack Table for list views with filtering, sorting, selection, pagination, or export. It can also be used headlessly for filtered card/grid collections when the UI is not a literal table, as the access and feedback/workshop collection views do.
 
 Standard table files:
 
@@ -375,39 +379,39 @@ Standard table files:
 <Feature>TableResetSelection.tsx
 ```
 
-Omit files that are not needed.
+Omit files that are not needed. Card-backed collections may add a `<Feature>Card.tsx` and omit action-cell, visibility, pagination, selection, delete, reset, and export files when the UI does not use those capabilities.
 
 `<Feature>Table.tsx` owns:
 
 - query hook call
 - `columnFilters`
-- `columnVisibility`
-- `rowSelection`
+- `columnVisibility` when visibility controls exist
+- `rowSelection` when selection or bulk actions exist
 - `useReactTable`
 - toolbar composition
-- table wrapper
-- pagination
+- table wrapper or card/grid wrapper
+- pagination when the UX exposes pagination
 
 Required table settings:
 
 - `pageSize: 20`
 - `autoResetPageIndex: false`
-- `getRowId: (row) => row._id as string`
+- `getRowId` using the entity's stable identifier, e.g. `row._id as string` for database entities or `row.clerkId` for access grants
 - `getCoreRowModel`
-- `getPaginationRowModel`
+- `getPaginationRowModel` when pagination is enabled
 - `getFilteredRowModel`
 
-Show `<TableSkeleton />` while loading.
+Show `<TableSkeleton />` while loading table-shaped views. For card/grid collections, use a feature skeleton or inline skeleton layout that matches the real cards.
 
 Column definitions:
 
 - Export a function returning `ColumnDef[]`.
-- First column is the select checkbox column.
-- Last column is the action cell.
+- First column is the select checkbox column when the feature uses row selection.
+- Last column is the action cell when row actions render inside a table.
 - Use in-file mini components for translated headers.
-- Keep cell renderers short.
+- Keep cell renderers short. Headless table column defs used only for filtering may contain only accessor columns.
 
-Empty table body renders `t("no-results")`.
+Empty table bodies render `t("no-results")`. Card/grid collections may render a centered feature-specific empty string such as `t("no-access-found")`.
 
 Exports:
 
@@ -504,9 +508,9 @@ Empty states:
 Loading:
 
 - Page and section loading uses skeletons from `components/skeleton`.
-- Tables use `TableSkeleton`.
+- Literal table views use `TableSkeleton`; card/grid collections use a feature skeleton or local skeleton layout that matches the real cards.
 - Full auth-loading pages use `SpinnerPage`.
-- Inline button loading may use `Loader2 className="size-4 animate-spin"`.
+- Inline action loading may use the existing shadcn `Spinner` from `@/components/ui/spinner` or the established local button spinner pattern.
 
 Errors:
 

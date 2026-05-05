@@ -1,6 +1,6 @@
-# Data tables (TanStack Table)
+# Data tables and table-powered collections (TanStack Table)
 
-Every list view that needs filtering, sorting, selection, or export uses **`@tanstack/react-table`** decomposed into the same set of files. Mirror this layout exactly.
+Every list view that needs filtering, sorting, selection, or export uses **`@tanstack/react-table`**. Literal data tables follow the full table decomposition. Card/grid collections can use TanStack Table headlessly for filtering and row modeling while rendering cards instead of `<Table>` primitives.
 
 ## 1 — File decomposition per table
 
@@ -21,6 +21,8 @@ WidgetsTableResetSelection.tsx  # clear-selection button
 ```
 
 If a feature doesn't need every file (no export, no filter, no bulk-delete), **omit those files**. Don't create empty stubs.
+
+Card-backed collections may add a `<Feature>Card.tsx` and omit table-only pieces such as action cells, visibility, pagination, selection, delete, reset, and export controls when the UI does not expose those capabilities. Access grants currently use `AccessTable`, `AccessTableMain`, `AccessTableColumnDefs`, `AccessTableSearch`, and `AccessCard`.
 
 ## 2 — `WidgetsTable.tsx` skeleton
 
@@ -86,15 +88,23 @@ Hard rules:
 
 - `pageSize: 20` is the standard default.
 - `autoResetPageIndex: false` is the standard — preserve page on filter changes.
-- `getRowId: (row) => row._id` (or whatever the entity's stable id field is) is required for `rowSelection` persistence across filter changes.
+- `getRowId` must use the entity's stable id field, e.g. `row._id as string` for database entities or `row.clerkId` for access grants.
 - The bulk-action buttons (`Delete`, `ResetSelection`) are mounted **only when** `rowSelection` is non-empty, wrapped in a `<Fragment>`.
 - The `<Create...>` dialog/button is the **last** child of the `<ButtonGroup>`.
+
+For headless card/grid collections:
+
+- Keep `columnFilters` and the row models needed for the UX; omit `columnVisibility`, `rowSelection`, and pagination state when there are no controls for them.
+- `ColumnDef[]` can be accessor-only when columns exist only for searching/filtering.
+- Render `table.getFilteredRowModel().rows` into cards in `<Feature>TableMain`.
+- Use a card/grid skeleton that matches the real layout instead of `<TableSkeleton />`.
+- Empty state can be a centered feature-specific key such as `t("no-access-found")`.
 
 ## 3 — Column definitions (`WidgetsTableColumnDefs.tsx`)
 
 - Export a function that returns the `ColumnDef[]` so id-scoped values (scope ids, parent ids) close over correctly.
-- The first column is always a `select` checkbox column (`enableSorting: false`, `enableHiding: false`).
-- The last column is the action cell, appended via `columns.push(FormatActionsHeaderAndCell(...))`.
+- The first column is a `select` checkbox column (`enableSorting: false`, `enableHiding: false`) when the feature uses row selection.
+- The last column is the action cell, appended via `columns.push(FormatActionsHeaderAndCell(...))`, when row actions render inside a table.
 - For translated headers, define a small in-file component (e.g. `TranslatedHeader`) instead of calling `useTranslation()` inside the cell render — `header: () => <TranslatedHeader header="name" />`.
 - Cell renderers are kept short. Wrap inline content in `<Badge>`, `<Avatar>`, or simple `<div>` with utility classes (`w-max max-w-56 truncate ...`).
 
@@ -114,6 +124,8 @@ Hard rules:
 }
 ```
 
+For card/grid collection mains, render a centered empty message with the feature key that matches the UI, e.g. `t("no-access-found")`.
+
 ## 5 — CSV / JSON export
 
 - Live in `<Feature>.helpers.ts`, three functions: `Structure<Feature>ToExport(rows)`, `<Feature>CSVExporter(headers, data)`, `<Feature>JSONExporter(data)`. Names are PascalCase by precedent.
@@ -127,12 +139,12 @@ Hard rules:
 ## 6 — Bulk delete
 
 - The bulk-delete component takes `{ scopeId, ..., table }` props.
-- It calls `useDelete<Feature>` with `<feature>Ids: table.getFilteredSelectedRowModel().flatRows.map(r => r.original._id)`.
+- It calls `useDelete<Feature>` with ids from the entity's stable id field, e.g. `<feature>Ids: table.getFilteredSelectedRowModel().flatRows.map((r) => r.original._id)` for database entities.
 - After success it should reset selection: `table.toggleAllRowsSelected(false)` (or simply rely on cache invalidation; mirror local precedent).
 
 ## 7 — Don't do
 
-- Don't compose tables outside this 10-file decomposition for the sake of brevity. Even a small table follows the pattern.
+- Don't compose literal data tables outside this decomposition for the sake of brevity. Even a small table follows the pattern, while card/grid collections use the headless subset described above.
 - Don't wire pagination with custom hooks when `getPaginationRowModel()` already covers it.
-- Don't bypass `<TableSkeleton />` while loading — show it.
+- Don't bypass loading skeletons. Use `<TableSkeleton />` for literal table views and a matching feature/card skeleton for card or grid collections.
 - Don't add server-side filtering/pagination unless the dataset is large enough to require it. Default to client-side.

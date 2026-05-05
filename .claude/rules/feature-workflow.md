@@ -1,6 +1,6 @@
 # Feature workflow
 
-The canonical Create / Read / Update / Delete flow for any feature. **Stick to this exactly** — every feature follows the same shape so unrelated areas of the app stay legible to the same engineer.
+The canonical Create / Read / Update / Delete flow for ordinary resource features. Follow this shape by default so unrelated areas of the app stay legible to the same engineer, but mirror existing feature-specific flows when the backend contract is different (for example access grants).
 
 **TanStack Query** is the only layer for server state. UI components never call Axios directly; they consume hooks under `src/hooks/<feature>/`, which wrap the functions in `src/services/<feature>/<Feature>.api.ts`.
 
@@ -19,7 +19,7 @@ src/services/widgets/
 src/hooks/widgets/
     useGetAllWidgets.ts   # list query
     useWidgetById.ts      # detail query
-    useCreateWidget.ts    # create mutation (uses useIdempotentMutation)
+    useCreateWidget.ts    # create mutation (uses useIdempotentMutation when the endpoint supports it)
     useUpdateWidget.ts    # update mutation (plain useMutation)
     useDeleteWidget.ts    # delete mutation (plain useMutation)
 
@@ -39,7 +39,7 @@ src/components/widgets/
     WidgetsTableResetSelection.tsx
 ```
 
-If a feature does not need every file (e.g. no export, no filter), simply omit it. Don't create empty files.
+If a feature does not need every file (e.g. no export, no filter, no update dialog), simply omit it. Don't create empty files. Access grants currently use `CreateAccessDialog`, `AccessCard`, and grant update/revoke controls inside each card rather than a separate `UpdateAccessDialog` or table action cell.
 
 ---
 
@@ -54,6 +54,7 @@ If a feature does not need every file (e.g. no export, no filter), simply omit i
 - Export the entity TS `type` (`Widget`) — this is the API's response shape, **not** derived from Zod.
 - Export each call as a `camelCase async function`. Return the parsed response (`API.GET<Widget[]>(...)`).
 - Idempotent creates take an `idempotencyKey: string` parameter and forward it as the `"Idempotency-Key"` header. The hook layer (`useIdempotentMutation`) injects the key.
+- Only use that idempotency shape when the backend endpoint supports it. Current idempotent resource creates include events, exclusives, feedback, participants, and workshops. Access grants and endpoints without an idempotency contract use plain `API.POST` and `useMutation`.
 - File-uploading endpoints follow the two-step presigned-URL pattern: `API.POST` to get `{ uploadUrl, imgUrl }`, then `API.PUT` the file to the upload URL, then return the resulting `imgUrl` to the caller. Keep the upload helper as a non-exported function at the bottom of `<Feature>.api.ts`.
 
 ---
@@ -99,7 +100,7 @@ Rules:
 
 ---
 
-## 4 — Create flow (idempotent mutation)
+## 4 — Create flow (idempotent mutation when supported)
 
 ```ts
 // src/hooks/widgets/useCreateWidget.ts
@@ -135,7 +136,8 @@ export function useCreateWidget(successCallBack?: () => void) {
 
 Rules:
 
-- Creates use **`useIdempotentMutation`** (from `@/hooks/useIdempotentMutation`), which auto-generates a `crypto.randomUUID()` idempotency key and reuses it across retries.
+- Creates use **`useIdempotentMutation`** (from `@/hooks/useIdempotentMutation`) when the service function accepts an idempotency key and forwards `Idempotency-Key`.
+- Creates without a backend idempotency contract, including `useGrantAccess`, use plain `useMutation` while keeping the standard `onSuccess` / `onError` / `onSettled` lifecycle.
 - Updates and deletes use plain `useMutation` from `@tanstack/react-query`.
 - The hook accepts an optional `successCallBack?: () => void` (camelCase, exactly that spelling — kept for consistency).
 - Hook return shape: `{ <verb><Resource>, loading, success?, isError, reset }`. Aliases:

@@ -35,11 +35,11 @@ alwaysApply: false
 
 # Tables (TanStack Table)
 
-- Decompose only as far as similar features do (`Table`, `TableMain`, `TableColumnDefs`, search/filter/pagination/export/delete/reset when needed).
-- Owner file holds query hook, `columnFilters`, `columnVisibility`, `rowSelection`, `useReactTable`, toolbar, wrapper, pagination.
-- Settings aligned with existing tables: `pageSize: 20`, `autoResetPageIndex: false`, `getRowId: (row) => row._id as string`, `getCoreRowModel`, `getPaginationRowModel`, `getFilteredRowModel`.
-- Loading: `TableSkeleton`. Empty body: `t("no-results")`.
-- Columns fn returns `ColumnDef[]`; first column select checkbox when the feature uses row selection; last column actions; short cell renderers; small in-file header components for translations.
+- Decompose only as far as similar features do (`Table`, `TableMain`, `TableColumnDefs`, search/filter/pagination/export/delete/reset when needed). Card-backed collections may add a `<Feature>Card.tsx` and omit unused table subpieces.
+- Owner file holds query hook, `columnFilters`, optional `columnVisibility`, optional `rowSelection`, `useReactTable`, toolbar, wrapper, and pagination only when exposed by the UI.
+- Settings aligned with existing tables: `pageSize: 20`, `autoResetPageIndex: false`, stable `getRowId` (`row._id as string` for database entities, `row.clerkId` for access grants), `getCoreRowModel`, `getFilteredRowModel`, and `getPaginationRowModel` when pagination is enabled.
+- Loading: `TableSkeleton` for literal table views; feature/card skeletons for card or grid collections. Empty table body: `t("no-results")`; card/grid collections may use a feature-specific empty key such as `t("no-access-found")`.
+- Columns fn returns `ColumnDef[]`; first column select checkbox when the feature uses row selection; last column actions when row actions live in a table; short cell renderers; small in-file header components for translations. Headless filtering columns can be accessor-only.
 - Export: feature helpers + PapaParse + UTF-8 BOM; filenames `${feature}_${Date.now()}.csv` or `.json` per existing exporters.
 
 # Empty / error / loading

@@ -27,7 +27,8 @@ alwaysApply: false
 
 # Mutations
 
-- **Creates:** `useIdempotentMutation` when that is the project pattern.
+- **Creates:** `useIdempotentMutation` when the service function accepts an idempotency key and forwards `Idempotency-Key`.
+- **Non-idempotent creates:** use plain `useMutation` when the backend endpoint has no idempotency contract, including access grants (`useGrantAccess`).
 - **Updates/deletes:** `useMutation` unless a shared wrapper exists—match the feature.
 - Multi-arg mutations: single object parameter.
 - Always implement `onSuccess`, `onError`, `onSettled`; call `reset()` in `onSettled`.

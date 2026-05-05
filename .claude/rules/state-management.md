@@ -7,7 +7,7 @@ There are exactly three places state lives in this stack. Pick the right one for
 All data that comes from the backend is owned by **TanStack Query**. Never mirror it into local state.
 
 - Reads: `useQuery` inside a hook under `src/hooks/<feature>/use<Resource>...ts`. Components consume the hook.
-- Writes: `useMutation` (or `useIdempotentMutation` for creates) inside a hook in the same folder. See `feature-workflow.md`.
+- Writes: `useMutation` inside a hook in the same folder. Use `useIdempotentMutation` for creates only when the service function and backend endpoint support `Idempotency-Key`. See `feature-workflow.md`.
 - Defaults are set globally in `src/main.tsx`:
     ```ts
     new QueryClient({

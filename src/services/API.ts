@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
-import { useAuth } from "@clerk/clerk-react";
+
+import { useAuth } from "@clerk/react";
 
 axios.defaults.withCredentials = true;
 
@@ -29,7 +30,7 @@ axios.interceptors.request.use(async (config) => {
 });
 
 function errorHandler(error: unknown) {
-    if (error instanceof AxiosError) return new Error(error?.response?.data?.message || "service-unavailable");
+    if (error instanceof AxiosError) return new Error(error?.response?.data?.message);
     if (error instanceof Error) return new Error(error.message);
     return new Error("service-unavailable");
 }

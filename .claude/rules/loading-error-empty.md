@@ -49,13 +49,13 @@ Don't combine these into ternaries inside JSX. Use early returns.
 
 - One `PascalCase.tsx` skeleton per page or section, named `<Feature>Skeleton.tsx` (plus a generic `TableSkeleton.tsx`, `PlaceholderSkeleton.tsx` etc).
 - Built from the shadcn `<Skeleton />` primitive arranged to **match the real layout** (headings, stat grids, tables) so swapping in real content doesn't shift the page.
-- Use `<TableSkeleton />` inside any `useReactTable`-driven component while `loading` is true. Don't render a half-loaded table.
-- For inline mid-content loading (e.g. button submitting), use a `<Loader2 className="size-4 animate-spin" />` from `lucide-react`.
+- Use `<TableSkeleton />` inside literal table views while `loading` is true. For `useReactTable`-powered card/grid collections, use a feature skeleton or local skeleton layout that matches the real cards.
+- For inline mid-content loading (e.g. card action pending or button submitting), use the existing shadcn `<Spinner />` from `@/components/ui/spinner` or the established local button spinner pattern.
 
 ## 5 — Spinners
 
 - `<SpinnerPage />` from `src/components/general/` is the full-page spinner used by `_app.tsx`, `_auth.tsx`, and `_base.tsx` while Clerk's `useAuth().isLoaded` is false.
-- For other "tiny synchronous loading" cases, prefer a skeleton over a spinner.
+- For other "tiny synchronous loading" cases, prefer a skeleton over a spinner unless the surrounding action-cell/card pattern already uses `<Spinner />`.
 
 ## 6 — Toasts (sonner)
 

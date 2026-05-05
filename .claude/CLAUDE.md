@@ -54,7 +54,7 @@ Conventions and workflows live in `.claude/rules/*.md` (loaded automatically wit
 | `naming-conventions.md`      | Component / hook / helper / route / service / schema naming, query keys        |
 | `feature-workflow.md`        | Canonical CRUD flow with TanStack Query, mutation lifecycle, route gating      |
 | `forms.md`                   | React Hook Form + Zod + shadcn `Field` primitive patterns                      |
-| `auth.md`                    | Clerk wiring, token forwarding, route gating, user metadata                    |
+| `auth.md`                    | Clerk wiring, token forwarding, route gating, access endpoint permissions      |
 | `routing.md`                 | TanStack Router file layout, layout files, params, navigation                  |
 | `styling.md`                 | Tailwind v4, shadcn, RTL, icons, theming                                       |
 | `state-management.md`        | Where state lives — Query / contexts / `useState`                              |

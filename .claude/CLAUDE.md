@@ -45,20 +45,10 @@ When asked to do something, **default to the current structure** of the repo and
 
 ## Rule files
 
-Conventions and workflows live in `.claude/rules/*.md` (loaded automatically with this file). Read the relevant ones before writing code:
+Conventions and workflows live in `.claude/rules/*.md`. Read the relevant one before writing code:
 
-| File                         | Covers                                                                         |
-| ---------------------------- | ------------------------------------------------------------------------------ |
-| `coding-style.md`            | Baseline charter — consistency, TypeScript, component style, imports, comments |
-| `project-structure.md`       | Folder layout, file naming per area, what goes where                           |
-| `naming-conventions.md`      | Component / hook / helper / route / service / schema naming, query keys        |
-| `feature-workflow.md`        | Canonical CRUD flow with TanStack Query, mutation lifecycle, route gating      |
-| `forms.md`                   | React Hook Form + Zod + shadcn `Field` primitive patterns                      |
-| `auth.md`                    | Clerk wiring, token forwarding, route gating, access endpoint permissions      |
-| `routing.md`                 | TanStack Router file layout, layout files, params, navigation                  |
-| `styling.md`                 | Tailwind v4, shadcn, RTL, icons, theming                                       |
-| `state-management.md`        | Where state lives — Query / contexts / `useState`                              |
-| `tables.md`                  | TanStack Table file decomposition + state setup                                |
-| `loading-error-empty.md`     | Skeletons, empty-states, error fallbacks, toasts                               |
-| `translation.md`             | i18n key conventions, Zod error keys, dual-locale rules                        |
-| `tooling-and-environment.md` | Vite / TS / ESLint / Prettier / env vars / aliases                             |
+| File                  | Covers                                                                                                                            |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `architecture.md`     | Folder layout, file naming per area, routing, Clerk auth wiring, tooling (Vite / TS / ESLint / Prettier / env vars / aliases)     |
+| `feature-workflow.md` | End-to-end CRUD pattern: service → hook → form → table → loading/error/empty states → where state lives                           |
+| `conventions.md`      | TypeScript / React style, naming (component / hook / helper / route / service / schema / query keys), Tailwind + RTL, i18n keys   |
